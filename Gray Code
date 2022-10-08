@@ -46,3 +46,41 @@ int main(){
 	GreyCode(n);
 	return 0;
 }
+
+
+For Generation in number
+
+void grayCodeUtil(vector<int>& res, int n, int& num)
+{
+
+    if (n == 0) {
+        res.push_back(num);
+        return;
+    }
+ 
+    // ignore the bit.
+    grayCodeUtil(res, n - 1, num);
+ 
+    // invert the bit.
+    num = num ^ (1 << (n - 1));
+    grayCodeUtil(res, n - 1, num);
+}
+
+vector<int> grayCodes(int n){
+	vector<int> ans;
+	int num=0;
+	grayCodeUtil(ans,n,num);
+	return ans;
+}
+
+int main(){
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+   
+	int n;
+	cin>>n;
+	vector<int> code=grayCodes(n);
+	FOR(i,code.size())
+		cout<<code[i]<<" ";  
+	return 0;
+}
