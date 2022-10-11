@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
+#define pb push_back
 using namespace std;
- 
+
 
 //Method 1
 int _lis(int a[],int n){
@@ -69,6 +70,41 @@ int LIS(int n, int a[])
     return f(0, -1, n, a, dp);
 }
 
+
+// PRINT LIS
+void PRINT(vector<int>& arr)
+{
+    for (int x : arr)
+        cout << x << " ";
+    
+    
+    cout << endl;
+}
+
+void PrintLIS(int a[],int n){
+    
+    vector<vector<int>> L(n);
+
+    L[0].pb(a[0]);
+
+    for(int i=1;i<n;i++){
+        for(int j=0;j<i;j++){
+            if(a[i] > a[j]  && (L[i].size()< L[j].size()+1))
+                L[i]=L[j];
+        }
+        L[i].pb(a[i]);
+    }
+
+    
+    vector<int> max=L[0];
+
+    for(vector<int> x : L)
+        if(x.size()>max.size())
+            max=x;
+
+    PRINT(max);
+}
+
 int main(){
     int n;
     cin>>n;
@@ -81,9 +117,9 @@ int main(){
     
     sort(b,b+n);
     cout<< lcs(a,b,n)<<endl;
-
     cout<<_lis(a,n)<<endl;
     cout<<LIS(n,a)<<endl;
+    PrintLIS(a,n);
 
     return 0;
 
