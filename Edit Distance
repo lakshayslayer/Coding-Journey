@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+#define pb push_back
+using namespace std;
+
+int min(int x, int y, int z) { return min(min(x, y), z); }
+
+int editDistance(string s, string r,int n,int m){
+    if(n==0 || m==0){
+        return n+m;
+    }
+
+    if(s[n-1]==r[m-1])
+        return editDistance(s,r,n-1,m-1);   
+    
+    return 1 + min(editDistance(s,r,n-1,m),editDistance(s,r,n,m-1),editDistance(s,r,n-1,m-1));
+}
+
+
+int editDist_DP(string s, string r,int n,int m){
+    int dp[n+1][m+1];
+
+    for(int i=0;i<=n;i++){
+        for(int j=0;j<=m;j++){
+
+            if(i==0 || j==0){
+                dp[i][j]=i+j;
+            }
+            else if(s[i-1]==r[j-1]){
+                dp[i][j]= dp[i-1][j-1];
+            }
+            else 
+                dp[i][j]=1+ min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+        }
+    }
+    return dp[n][m];
+}
+
+//  memoized version of recursion i.e. Top-Down DP:
+int minDis(string s, string r,int n,int m,vector<vector<int> >& dp){
+
+    if(n==0 || m==0)
+        return n+m;
+    
+    if(dp[n][m] != -1){
+        return dp[n][m];
+    }
+
+    if(s[n-1]==r[m-1]){
+        return minDis(s,r,n-1,m-1,dp);
+    }
+
+    else{
+        int Insert,Delete,Replace;
+        Insert=minDis(s,r,n,m-1,dp);
+        Delete=minDis(s,r,n-1,m,dp);
+        Replace=minDis(s,r,n-1,m-1,dp);
+        return dp[n][m]=1+min(Insert,Delete,Replace);
+    }
+}
+
+int main(){
+    string s,r;
+    cin>>s>>r;
+    int n = s.length(), m = r.length();
+    vector<vector<int> > dp(n + 1, vector<int>(m + 1, -1));
+ 
+    cout<<editDistance(s,r,s.length(),r.length())<<endl;;
+    cout<<editDist_DP(s,r,s.length(),r.length())<<endl;
+    cout<<minDis(s,r,s.length(),r.length(),dp)<<endl;
+
+
+    return 0;
+
+}
