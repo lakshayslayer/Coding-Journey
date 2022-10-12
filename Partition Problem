@@ -1,0 +1,88 @@
+#include <bits/stdc++.h>
+#define pb push_back
+using namespace std;
+
+// Mthod 1
+bool isSubSetSum(int a[],int i,int n,int sum){
+    //base case
+    if(sum==0)
+        return true;
+    if(i==n && sum!=0)
+        return false;
+
+    if (a[n - 1] > sum)
+        return isSubSetSum(a,i+1, n , sum);
+
+    return isSubSetSum(a,i+1,n,sum) || isSubSetSum(a,i+1,n,sum-a[i]);
+
+    
+}
+
+bool findPartition(int n,int a[]){
+
+    int sum = 0;
+    for (int i = 0; i < n; i++)
+        sum += a[i];
+
+    if (sum % 2 != 0)
+        return false;
+
+    
+    return isSubSetSum(a, 1,n, sum / 2);
+
+}
+
+
+// Method 2
+
+bool SubsetSum(int a[],int n,int sum,vector<vector<int> >& dp){
+
+    if (sum == 0)
+        return true;
+    if (n == 0 && sum != 0)
+        return false;
+
+    if (dp[n][sum] != -1) {
+        return dp[n][sum];
+    }
+    
+    if (a[n - 1] > sum)
+        return SubsetSum(a, n - 1, sum, dp);
+
+    return dp[n][sum]=SubsetSum(a, n - 1, sum, dp)
+             || SubsetSum(a, n - 1, sum - a[n - 1],dp);
+                            
+}
+bool Partition(int n,int a[]){
+    
+    int sum = 0;
+    for (int i = 0; i < n; i++)
+        sum += a[i];
+
+    if (sum % 2 != 0)
+        return false;
+    
+    vector<vector<int> > dp(n + 1,vector<int>(sum + 1, -1));
+    return SubsetSum(a,n,sum/2,dp);
+}
+                            
+
+int main(){
+
+    int n;cin>>n;
+    int a[n];
+    for(int i=0;i<n;i++) cin>>a[i];
+
+    if(findPartition(n,a))
+        cout<<"YES"<<endl;
+    else cout<<"NO"<<endl;
+
+    if(Partition(n,a))
+        cout<<"YES"<<endl;
+    else cout<<"NO"<<endl;
+
+
+
+    return 0;
+
+}
