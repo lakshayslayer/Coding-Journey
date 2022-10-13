@@ -1,0 +1,69 @@
+#include <bits/stdc++.h>
+#define pb push_back
+using namespace std;
+
+
+// Method 1 O(2^n)                          
+int FindMIN(int a[],int i,int sumCalculated, int sumTotal){
+    if(i==0){
+        return abs((sumTotal-sumCalculated)-sumCalculated);
+    }
+
+    return min(FindMIN(a,i-1,sumCalculated+a[i-1],sumTotal)
+                ,FindMIN(a,i-1,sumCalculated,sumTotal));
+}
+
+int findMin(int a[],int n)
+{
+    int sumTotal = 0;
+    for (int i = 0; i < n; i++)
+        sumTotal += a[i];
+    
+    return FindMIN(a,n,0,sumTotal);
+}
+
+// Method 2
+int FINDMIN(int a[],int n){
+     int sum = 0;
+    for (int i = 0; i < n; i++)
+        sum += a[i];
+    
+    bool dp[n + 1][sum + 1];
+
+    for (int i = 0; i <= n; i++)
+        dp[i][0] = true;
+    for (int i = 1; i <= sum; i++)
+        dp[0][i] = false;
+
+    for(int i=1;i<=n;i++){
+        for(int j=1;j<=sum;j++){
+            dp[i][j]=dp[i-1][j];
+            if(a[i-1]<=j)
+                dp[i][j] |= dp[i-1][j-a[i-1]];
+        }
+    }
+
+    int diff=INT_MAX;
+
+    for(int j=sum/2;j>=0;j--){
+        if(dp[n][j]){
+            diff=sum-2*j;
+            break;
+        }
+    }
+    return diff;
+}
+int main(){
+
+    int n;
+    cin>>n;
+    int a[n];
+    for(int i=0;i<n;i++) cin>>a[i];
+
+    cout<<findMin(a,n)<<endl;
+    cout<<FINDMIN(a,n)<<endl;
+
+
+    return 0;
+
+}
