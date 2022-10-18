@@ -1,0 +1,277 @@
+QUESTION 1 : OPTIMAL STRATEGY FOR A GAME
+
+//recursive top down solution-------------------------------------------------
+#include<bits/stdc++.h>
+#define pb push_back
+using namespace std;
+
+ vector<int> a;
+int solve(int k1,int k2,vector<vector<int> >& f){
+
+    if(k1==k2)
+        return f[k1][k2]=a[k1];
+    if(k2==k1+1){
+        return f[k1][k2]=max(a[k1],a[k2]);
+    }
+    if(f[k1][k2]!=-1)
+        return f[k1][k2];
+        
+
+    int option1=a[k1]+min(solve(k1+2,k2,f),solve(k1+1,k2-1,f));
+    int option2=(a[k2]+min(solve(k1 + 1, k2 - 1,f), solve(k1, k2 - 2,f)));
+     f[k1][k2]=  max(option1,option2);
+             return f[k1][k2]  ;         
+    
+}
+int main(){ 
+    int t;
+    cin>>t;
+    while(t--){
+        int x;cin>>x;
+        a.push_back(x);
+    }
+    int n = a.size();
+    vector<vector<int> > f(n + 1, vector<int>(n + 1, -1));
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a.size();j++){
+            f[i][j]=-1;
+        }
+    }
+    cout<<solve(0,a.size()-1,f)<<endl;;
+
+    return 0;
+
+}
+
+
+//The bottom up approach -------------------------------------------------------------------
+#include<bits/stdc++.h>
+#define pb push_back
+using namespace std;
+
+vector<int> a;
+int n = a.size();
+
+int solve(){
+
+    int f[n][n];
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n;j++){
+            f[i][j]=-1;
+        }
+    }
+
+    int prefix[n];
+    prefix[0]=a[0];
+    for(int i=1;i<n;i++){
+        prefix[i]=a[i]+prefix[i-1];
+    }
+
+    for(int i=0;i<n;i++){
+        f[i][i]=a[i];
+    }
+    for(int i=1;i<n;i++){
+        for(int j=0;j<n-i;j++){ 
+            f[i+j][j]=max ( a[i+j] + (prefix[j]-prefix[i+j])-f[i+j+1][j]   ,   a[j] +  (prefix[j-1]-prefix[i+j])-f[i+j][j-1]   );
+        }
+    }
+
+
+    return f[0][n-1];
+         
+    
+}
+int main(){ 
+    int t;
+    cin>>t;
+    while(t--){
+        int x;cin>>x;
+        a.push_back(x);
+    }
+    
+    vector<vector<int> > f(n + 1, vector<int>(n + 1, -1));
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a.size();j++){
+            f[i][j]=-1;
+        }
+    }
+    cout<<solve()<<endl;;
+
+    return 0;
+
+}
+
+
+
+**************************************************************************************************
+
+QUESTION 2: 0 - 1 Knapsack Problem
+
+
+#include<bits/stdc++.h>
+#define pb push_back
+#define  FOR(i,n) for(long long i = 0; i < (n); i++)
+using namespace std;
+
+
+int solve(int v[],int w[],int sum,int n){
+    if(n==0 || sum==0) return 0;
+
+    if(w[n-1]>sum) return solve(v,w,sum,n-1);
+
+    else return max(solve(v,w,sum,n-1) , v[n-1]+solve(v,w,sum-w[n-1],n-1));
+}
+
+int solveDP(int val[],int wt[],int W,int n){
+    int i, w;
+      vector<vector<int>> K(n + 1, vector<int>(W + 1));
+    for(i = 0; i <= n; i++)
+    {
+        for(w = 0; w <= W; w++)
+        {
+            if (i == 0 || w == 0)
+                K[i][w] = 0;
+            else if (wt[i - 1] <= w)
+                K[i][w] = max(val[i - 1] +
+                                K[i - 1][w - wt[i - 1]],
+                                K[i - 1][w]);
+            else
+                K[i][w] = K[i - 1][w];
+        }
+    }
+    return K[n][W];
+}
+int main(){ 
+    
+    int n,m;
+    cin>>n>>m;
+    int val[n],wt[n];
+    FOR(i,n) cin>>val[i];
+    FOR(i,n) cin>>wt[i];
+    cout<<solve(val,wt,m,n-1)<<endl;
+    cout<<solveDP(val,wt,m,n-1)<<endl;
+
+    return 0;
+
+}
+
+**************************************************************************************************
+
+QUESTION 3: Rod Cutting
+
+#include<bits/stdc++.h>
+#define pb push_back
+#define  FOR(i,n) for(long long i = 0; i < (n); i++)
+using namespace std;
+
+int dp[1005];
+int func(int len,vector<int> &prices){
+    if(len==0)return 0;
+    if(dp[len]!=-1) return dp[len];
+    int mx=0;
+    for(int len_to_cut=1;len_to_cut<=prices.size();len_to_cut++){
+        if(len-len_to_cut>=0){
+            mx=max(mx,func(len-len_to_cut,prices)+prices[len_to_cut-1]);
+        }
+    }
+    return dp[len]= mx;
+}
+int solve(int price[],int n){
+    memset(dp,-1,sizeof(dp));
+    vector<int> prices(price,price+n);
+    return func(n,prices);
+    
+}
+
+
+int main(){ 
+    int n;cin>>n;
+    int price[n];
+    
+    FOR(i,n) cin>>price[i];
+    cout<<solve(price,n)<<endl;
+   
+    return 0;
+
+}
+
+**************************************************************************************************
+
+QUESTION 4: Dice Throw
+
+#include<bits/stdc++.h>
+#define pb push_back
+#define  FOR(i,n) for(long long i = 0; i < (n); i++)
+using namespace std;
+
+int findWays(int m,int n,int x){
+
+    int f[n+1][x+1];
+    memset(f,0,sizeof(f));
+    
+    for(int i=1;i<=m && i<=x;i++){
+        f[1][i]=1;
+    }
+
+    for(int i=2;i<=n;i++){
+        for(int j=1;j<=x;j++)
+            for(int k=1;k<=m && k<j;k++)
+                f[i][j]+=f[i-1][j-k];
+    }
+    return f[n][x];
+}
+
+int main(){ 
+   
+   int m,n,x;
+   cin>>m>>n>>x;
+   cout<<findWays(m,n,x);
+   
+    return 0;
+
+}
+
+
+
+**************************************************************************************************
+
+QUESTION 5: Egg DRop
+
+#include<bits/stdc++.h>
+#define pb push_back
+#define  FOR(i,n) for(long long i = 0; i < (n); i++)
+using namespace std;
+
+int eggDrop(int n,int k){
+
+    if (k == 1 || k == 0)
+        return k;
+
+    if (n == 1)
+        return k;
+
+    int min = INT_MAX, x;
+
+    for (x = 1; x <= k; x++) {
+         int res = max( eggDrop(n - 1, x - 1)
+                        ,eggDrop(n, k - x));        
+        if (res < min)
+            min = res;
+    }
+    return min + 1;
+}
+int main(){ 
+   
+   int n = 2, k = 10;
+    cout << "Minimum number of trials "
+            "in worst case with "
+         << n << " eggs and " << k
+         << " floors is "
+         << eggDrop(n, k) << endl;
+   
+    return 0;
+
+}
+
+
+:
