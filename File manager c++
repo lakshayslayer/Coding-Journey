@@ -1,0 +1,101 @@
+// Lakshay's code
+//  Imagine we have a system that stores files, and these files can be grouped into collections. We are interested in knowing where our resources are being taken up.
+// file1, size : 100, collection1
+// file2, size: 50, collection2
+//* file3, size: 100, null
+// file4, size: 40, collection3
+// file5, size: 100, collection2
+
+
+
+// 1. Total Size: 250
+// 2. Top 2 collections by size, top k collections
+// coll2
+// coll1
+#include <bits/stdc++.h>
+using namespace std;
+
+
+class company{
+public:
+    unordered_map< int, int > collections; 
+    set< pair<int,int> > rank;  // first collection size, secnd is collection id
+    int size = 0;
+
+    int totalSize(){
+        return size;
+    }
+
+    vector<int> topK(int k){
+        vector<int> required;
+        if(collections.size() <= k){
+            for(auto it = rank.end(); it != rank.begin(); it--){
+                pair<int,int> temp = *(it);
+                required.push_back(temp.second);
+            }
+            pair<int,int> temp = *rank.begin();
+            required.push_back(temp.second);
+        }
+        else{
+            int count = 0;
+            auto it = rank.end();
+            while(count  <  k){
+                pair<int,int> temp = *it;
+                required.push_back(temp.second);
+                count++;
+                it--;
+            }
+        }
+
+        return required;
+    }
+
+
+    void input(int fileId, int fileSize, int collectiondId){
+        size += fileSize;
+        if(collectiondId == -1){
+            return;
+        }
+
+        if(collections.find(collectiondId) != collections.end()){
+            int prevSize = collections[collectiondId];
+            rank.erase(rank.find({prevSize,collectiondId}));
+            rank.insert({prevSize+fileSize , collectiondId});
+        }
+        else{
+            rank.insert({fileSize , collectiondId});
+        }
+
+
+        collections[collectiondId] += fileSize;
+    }
+
+    
+};
+
+
+   
+int main() {
+
+    company Company;
+
+    Company.input(1,100,1);
+    Company.input(2,50,2);
+    Company.input(3,100,-1);
+    Company.input(4,40,3);
+    Company.input(5,100,2);
+    Company.input(5,100,3);
+
+    cout<<"total size of company "<<Company.totalSize()<<endl;
+
+    vector<int> topKelements = Company.topK(3);
+    cout<<"top 2 elememts are"<<endl;
+    for(auto it: topKelements) {
+        cout<<it<<" ";
+    }
+    cout<<endl;
+
+    return 0;
+}
+
+
